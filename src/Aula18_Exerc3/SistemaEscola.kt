@@ -2,72 +2,80 @@ package Aula18_Exerc3
 
 import kotlin.system.exitProcess
 
-class SistemaEscola {
-    fun instrucoesIniciais(){
-        println("Instruções iniciais:")
-        println("Nesse sistema você irá inserir as 4 notas (de um mesmo aluno), quando for pedido, e ao final te mostraremos qual foi a média final.")
-        println("Inicializando sistema...")
-    }
+open class SistemaEscola {
+    var listaNotasAluno: ArrayList<Aluno> = ArrayList(4)
+    var aluno = Aluno()
+    var notaA = Aluno()
 
-    fun sistama() {
-        bemVindo()
-        val listaNotas = cadastroNotasAluno()
-        val media = calculoMedia(listaNotas)
-        println("A média semestral do aluno foi $media")
-
-        perguntaExecutarNovamente()
-    }
-
-    fun bemVindo(){
+    private fun bemVindo() {
         println("\n-----------------------------------------------------")
         println("Bem vindo ao nosso sistema de notas da Escola SimCity")
         println("-----------------------------------------------------")
     }
 
-    fun cadastroNotasAluno(): DoubleArray{
-        val listaNotas = DoubleArray(4)
-        for (i in listaNotas.indices) {
-            println("Escreva a nota que o aluno teve na ${i + 1}º prova")
-            val notaAluno = readln().toDouble()
-            listaNotas[i] = analisandoNotas(notaAluno)
-        }
-        return listaNotas
-    }
-
-    fun calculoMedia(listaNotas: DoubleArray): Double {
-        var media = 0.0
-        listaNotas.forEachIndexed { index, _ ->
-            media += listaNotas[index]
-        }
-        return media / 4
-    }
-
-    fun analisandoNotas(notaAluno: Double): Double{
-        var analiseNota = notaAluno
-        if (analiseNota < 0 || analiseNota > 10 ) {
-            do {
-                println("Nota inválida! Insira um valor entre 0 e 10")
-                analiseNota = readln().toDouble()
+    fun menuSistema() {
+        bemVindo()
+        while (true) {
+            println("-------------------------------------")
+            println("1 - Cadastrar notas")
+            println("2 - Visualizar notas cadastradas")
+            println("3 - Mostrar média semestral do aluno")
+            println("4 - Sair")
+            println("-------------------------------------")
+            when (readln().toInt()) {
+                1 -> {
+                    cadastrarNotas()
+//                perguntaExecutarNovamente()
+                }
+                2 -> visualizarListaNotas()
+                3 -> println(aluno.exibirMedia(listaNotasAluno))
+                4 -> encerrarSistema()
             }
-            while (analiseNota < 0 || analiseNota > 10)
-        }
-        println("Nota cadastrada")
-        return analiseNota
-    }
-
-    fun perguntaExecutarNovamente(){
-        println("\nDeseja fazer um novo cálculo? \n1-sim 2-nao")
-        when (readln().toInt()) {
-            1 -> sistama()
-            2 -> encerrarSistema()
-            else -> perguntaExecutarNovamente()
         }
     }
 
-    fun encerrarSistema(){
+    fun cadastrarNotas() {
+        for (i in 1..4) {
+            println("Escreva a nota que o aluno teve na ${i}º prova")
+            aluno.notaProva = readln().toDouble()
+            if (aluno.notaProva !in 0.0..10.0) {
+                notaA = validarNotas(aluno)
+            }
+            println("Nota cadastrada")
+
+            listaNotasAluno.add(notaA)
+        }
+    }
+
+    fun validarNotas(nota: Aluno): Aluno {
+        var notaAluno = nota
+        while (notaAluno.notaProva !in 0.0..10.0) {
+            println("Nota inválida! Insira um valor entre 0 e 10")
+            notaAluno.notaProva = readln().toDouble()
+        }
+        return notaAluno
+    }
+
+    fun visualizarListaNotas() {
+        listaNotasAluno.forEachIndexed { i, nota ->
+            println("A ${i + 1}º nota cadastrada foi ${nota.notaProva} ")
+        }
+    }
+//    var listaNotas = cadastroNotasAluno()
+//    var media = calculoMedia(listaNotas)
+//    println("A média semestral do aluno foi $media")
+
+//    private fun perguntaExecutarNovamente() {
+//        println("\nDeseja fazer um novo cálculo? \n1-sim 2-nao")
+//        when (readln().toInt()) {
+//            1 -> cadastrarNotas()
+//            2 -> encerrarSistema()
+//            else -> perguntaExecutarNovamente()
+//        }
+//    }
+
+    private fun encerrarSistema() {
         println("Obrigado por usar nosso sistema!")
         exitProcess(0)
     }
-
-
 }
